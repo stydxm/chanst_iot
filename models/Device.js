@@ -9,9 +9,9 @@ module.exports = sequelize.define(
         type_id: { type: DataTypes.INTEGER, allowNull: false, references: { model: DeviceType, key: "id" } },
         name: { type: DataTypes.STRING },
         owner_id: { type: DataTypes.UUID, allowNull: false },
-        position: { type: DataTypes.STRING, allowNull: true },
-        health: { type: DataTypes.STRING, allowNull: false },
-        status: { type: DataTypes.BOOLEAN, allowNull: false },
+        position: { type: DataTypes.STRING, allowNull: true, defaultValue: "" },
+        health: { type: DataTypes.STRING, allowNull: false, defaultValue: "normal" },
+        status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         worktime: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 } //单位小时
     },
     { freezeTableName: true, tableName: "chanst_devices" }

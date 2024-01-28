@@ -14,10 +14,10 @@ module.exports = sequelize.define(
             allowNull: false,
             references: { model: ComponentType, key: "id" }
         },
-        status: { type: DataTypes.INTEGER, allowNull: false },
-        owner_id: { type: DataTypes.UUID, allowNull: false },
-        position: { type: DataTypes.STRING, allowNull: true },
-        worktime: { type: DataTypes.STRING, allowNull: false, defaultValue: 0 }
+        value: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+        operation: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+        priority: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
     },
     { freezeTableName: true, tableName: "chanst_components" }
 )
