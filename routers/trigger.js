@@ -34,10 +34,26 @@ router.post("/create", (req, res) => {
 
 router.post("/delete", async (req, res) => {
     if ("uuid" in req.body) {
-        if (await Trigger.findByPk(req.body["uuid"]) !== undefined) {
+        if ((await Trigger.findByPk(req.body["uuid"])) !== undefined) {
             await Trigger.destroy({ where: { uuid: req.body["uuid"] } }).then(() => {
                 res.send("ok")
             })
+        } else {
+            res.status(404).send("not found")
+        }
+    } else {
+        res.status(400).send("param missing")
+    }
+})
+
+router.post("/toggle", async (req, res) => {
+    if ("uuid" in req.body && "status" in req.body) {
+        if ((await Trigger.findByPk(req.body["uuid"])) !== undefined) {
+            await Trigger.update({ enable: req.body["status"] === "on" }, { where: { uuid: req.body["uuid"] } }).then(
+                () => {
+                    res.send("ok")
+                }
+            )
         } else {
             res.status(404).send("not found")
         }
