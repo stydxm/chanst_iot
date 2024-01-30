@@ -1,4 +1,7 @@
 const { Sequelize } = require("sequelize")
+const Log = require("../models/Log")
+const Device = require("../models/Device")
+const Component = require("../models/Component")
 const logger = require("./logger")
 const time = require("./time")
 
@@ -9,7 +12,26 @@ sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USERNAME
     timezone: time.getTimezoneShift(),
     logging: (msg) => logger.debug(msg)
 })
-
 sequelize.sync({ alter: true }).then()
-
 module.exports.getSequelize = sequelize
+
+memory_db = {}
+module.exports.memoryDatabase = memory_db
+
+module.exports.updateStatus = async (type, uuid) => {
+    const types = { device: Device, component: Component }
+    const lastHeartbeatTime = await Log.findOne({
+        attributes: ["createdAt"],
+        where: {
+            type: type + "_heartbeat",
+            target: uuid
+        },
+        order: ["creratedAt", "DESC"]
+    })
+    const timeDiff = Math.abs(new Date() - lastHeartbeatTime)
+    if (timeDiff > 5000) {
+        await types[type].update({ status: false }, { where: { uuid: uuid } })
+    } else {
+        await types[type].update({ status: true }, { where: { uuid: uuid } })
+    }
+}

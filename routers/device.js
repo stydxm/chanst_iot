@@ -1,6 +1,7 @@
 const router = require("express").Router()
 const Device = require("../models/Device")
 const account = require("../utils/account")
+const database = require("../utils/database")
 
 router.post("/create", (req, res) => {
     const params = ["device_name", "type_id", "token"]
@@ -31,10 +32,11 @@ router.post("/create", (req, res) => {
 
 router.get("/query", async (req, res) => {
     if ("device_id" in req.query) {
-        const device = await Device.findOne({ where: { uuid: req.query["device_id"] } })
+        const device = await Device.findByPk(req.query["device_id"])
         if (device == null) {
             res.status(404).send("not found")
         } else {
+            await database.updateStatus("device", device["uuid"])
             res.send(device)
         }
     } else {
