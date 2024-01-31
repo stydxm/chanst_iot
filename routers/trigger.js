@@ -7,7 +7,7 @@ router.get("/list", async (req, res) => {
     const count = await Trigger.count()
     const page = req.query["page"] || 1
     if (count !== 0 && count > (page - 1) * 50) {
-        res.send(Trigger.findAll({ offset: (page - 1) * 50, limit: 50 }))
+        res.send(await Trigger.findAll({ offset: (page - 1) * 50, limit: 50 }))
     } else {
         res.send("{}")
     }

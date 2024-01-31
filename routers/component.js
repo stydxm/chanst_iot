@@ -5,6 +5,16 @@ const Log = require("../models/Log")
 const account = require("../utils/account")
 const database = require("../utils/database")
 
+router.get("/list", async (req, res) => {
+    const count = await Component.count()
+    const page = req.query["page"] || 1
+    if (count !== 0 && count > (page - 1) * 50) {
+        res.send(await Component.findAll({ offset: (page - 1) * 50, limit: 50 }))
+    } else {
+        res.send("{}")
+    }
+})
+
 router.post("/create", (req, res) => {
     const params = ["device_id", "component_name", "type_id", "token"]
     for (const param of params) {
