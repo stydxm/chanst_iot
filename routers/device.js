@@ -4,7 +4,7 @@ const DeviceType = require("../models/DeviceType")
 const account = require("../utils/account")
 const database = require("../utils/database")
 
-router.get("/list", async (req, res) => {
+router.get("/listall", async (req, res) => {
     const count = await DeviceType.count()
     const page = req.query["page"] || 1
     if (count !== 0 && count > (page - 1) * 50) {

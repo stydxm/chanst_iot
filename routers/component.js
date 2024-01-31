@@ -5,13 +5,26 @@ const Log = require("../models/Log")
 const account = require("../utils/account")
 const database = require("../utils/database")
 
-router.get("/list", async (req, res) => {
+router.get("/listall", async (req, res) => {
     const count = await Component.count()
     const page = req.query["page"] || 1
     if (count !== 0 && count > (page - 1) * 50) {
         res.send(await Component.findAll({ offset: (page - 1) * 50, limit: 50 }))
     } else {
         res.send("{}")
+    }
+})
+
+router.get("/list", async (req, res) => {
+    if ("device_id" in req.query) {
+        const count = await Component.count({ where: { device_id: req.query["device_id"] } })
+        if (count !== 0) {
+            res.send(await Component.findAll({ where: { device_id: req.query["device_id"] } }))
+        } else {
+            res.send("{}")
+        }
+    } else {
+        res.status(400).send("param missing")
     }
 })
 
