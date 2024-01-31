@@ -1,13 +1,23 @@
 const router = require("express").Router()
 const Device = require("../models/Device")
+const DeviceType = require("../models/DeviceType")
 const account = require("../utils/account")
 const database = require("../utils/database")
 
 router.get("/list", async (req, res) => {
-    const count = await Device.count()
+    const count = await DeviceType.count()
     const page = req.query["page"] || 1
     if (count !== 0 && count > (page - 1) * 50) {
-        res.send(await Device.findAll({ offset: (page - 1) * 50, limit: 50 }))
+        res.send(await DeviceType.findAll({ offset: (page - 1) * 50, limit: 50 }))
+    } else {
+        res.send("{}")
+    }
+})
+
+router.get("/types", async (req, res) => {
+    const count = await DeviceType.count()
+    if (count !== 0) {
+        res.send(await Device.findAll())
     } else {
         res.send("{}")
     }
