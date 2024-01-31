@@ -1,7 +1,4 @@
 const { Sequelize } = require("sequelize")
-const Log = require("../models/Log")
-const Device = require("../models/Device")
-const Component = require("../models/Component")
 const logger = require("./logger")
 const time = require("./time")
 
@@ -14,6 +11,10 @@ const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_US
 })
 sequelize.sync({ alter: true }).then()
 module.exports.getSequelize = sequelize
+
+const Log = require("../models/Log")
+const Device = require("../models/Device")
+const Component = require("../models/Component")
 
 memory_db = {}
 module.exports.memoryDatabase = memory_db
