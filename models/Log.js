@@ -8,7 +8,7 @@ module.exports = sequelize.define(
         type: { type: DataTypes.STRING, allowNull: false },
         operator: { type: DataTypes.STRING, allowNull: false },
         target: { type: DataTypes.STRING, allowNull: false },
-        content: { type: DataTypes.TEXT, allowNull: false }
+        content: { type: DataTypes.TEXT, allowNull: false, defaultValue: "" }
     },
     { freezeTableName: true, tableName: "chanst_logs", updatedAt: false }
 )

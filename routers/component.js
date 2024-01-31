@@ -80,13 +80,15 @@ router.get("/update", (req, res) => {
     }
 })
 
+router.use("/online", require("../utils/trigger"))
 router.post("/online", async (req, res) => {
     const component = await Component.findByPk(req.body["component_id"])
     if (component !== undefined) {
         Log.create({
             type: "component_heartbeat",
             operator: req.ip,
-            target: req.body["component_id"]
+            target: req.body["component_id"],
+            content: req.body["value"]
         })
             .then(() => {
                 Log.create({
@@ -94,6 +96,9 @@ router.post("/online", async (req, res) => {
                     operator: req.ip,
                     target: component["device_id"]
                 })
+            })
+            .then(() => {
+                Component.update({ value: req.body["value"] }, { where: { uuid: req.body["component_id"] } })
             })
             .then(() => {
                 res.send("ok")

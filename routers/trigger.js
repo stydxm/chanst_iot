@@ -1,4 +1,6 @@
 const router = require("express").Router()
+const Component = require("../models/Component")
+const ComponentType = require("../models/ComponentType")
 const Trigger = require("../models/Trigger")
 
 router.get("/list", async (req, res) => {
@@ -18,6 +20,46 @@ router.post("/create", (req, res) => {
             res.status(400).send("param missing")
             return
         }
+    }
+    let brokenParams = false
+    try {
+        const condition = JSON.stringify(req.body["condition"])
+        condition["max"] = parseFloat(condition["max"].toString())
+        condition["min"] = parseFloat(condition["min"].toString())
+        const operation = JSON.stringify(req.body["operation"])
+        operation["value"] = parseFloat(operation["value"].toString())
+        if (condition["max"] < condition["min"] || isNaN(condition["max"]) || isNaN(condition["min"]))
+            brokenParams = true
+        switch (condition["mode"]) {
+            case "component":
+                const component = Component.findByPk(condition["target"])
+                if (component === undefined) brokenParams = true
+                break
+            case "type":
+                const componentType = ComponentType.findByPk(condition["target"])
+                if (componentType === undefined) brokenParams = true
+                break
+            default:
+                brokenParams = true
+        }
+        switch (operation["mode"]) {
+            case "component":
+                const component = Component.findByPk(operation["target"])
+                if (component === undefined) brokenParams = true
+                break
+            case "type":
+                const componentType = ComponentType.findByPk(operation["target"])
+                if (componentType === undefined) brokenParams = true
+                break
+            default:
+                brokenParams = true
+        }
+    } catch {
+        brokenParams = true
+    }
+    if (brokenParams) {
+        res.status(400).send("wrong param")
+        return
     }
     Trigger.create({
         condition: req.body["condition"],
